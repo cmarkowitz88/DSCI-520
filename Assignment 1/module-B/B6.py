@@ -27,7 +27,7 @@ def load_book(book_id):
 
 # B4:Function(10/10)
 
-def load_book_2(book_id):
+def load_book_3(book_id, pos=True, lemma=True):
     idx_paragraph = 0
     idx_sentence = 0
     idx_word = 0
@@ -64,10 +64,21 @@ def load_book_2(book_id):
                     idx_word = 0
 
                     for token in sent:
-                        word_list.append(token.text)
+                        if lemma:
+                            text = token.lemma_
+                        else:
+                            text = token.text
+
+                        if pos:
+                            tag = token.pos_
+                        else:
+                            tag = ""
+                        heading = (text, tag)
+
+                        word_list.append(heading)
 
                         indicies_list = [idx_paragraph, idx_sentence, idx_word]
-                        index[token.text].append(indicies_list)
+                        index[heading].append(indicies_list)
 
                         idx_word += 1
 
@@ -146,9 +157,9 @@ def fast_kwic(document, index, search_terms={}):
 
 
 # --- Program Starts Here ---
-document, index = load_book_2('84')
+document, index = load_book_3('84', True, True)
 print(document[9][5])
 
-search_terms = {'Frankenstein', 'monster'}
-output = fast_kwic(document, index, {'Frankenstein'})
+search_terms = {('cold', 'NOUN')}
+output = fast_kwic(document, index, search_terms)
 print(output)
