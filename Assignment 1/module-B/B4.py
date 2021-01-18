@@ -33,17 +33,15 @@ def load_book_2(book_id):
     idx_sentence = 0
     idx_word = 0
 
-    doc_list = []
-
-
+    document = []
     index = defaultdict(def_value)
 
+    '''
     tst_lst = [['paragraph1', ['sentence1', 'sentence2']], ['paragraph2']]
-
     print(tst_lst[0])
     print(tst_lst[0][1])
-
     l = ['a', 'b', ['cc', 'dd', ['eee', 'fff']], 'g', 'h']
+    '''
 
     try:
         with open("./data/books/" + book_id + ".txt") as file:
@@ -51,30 +49,37 @@ def load_book_2(book_id):
             trimmed_book_data = book_data.strip()
             paragraphs = re.split('\n{2,}', trimmed_book_data)
 
-            # doc_list.append(para_list)
-
-
             for para in paragraphs:
                 para_list = []
                 doc = nlp(para)
                 para_list.append(doc.text)
-                doc_list.append(para_list)
+                document.append(para_list)
 
                 # sent_list = []
                 for sent in doc.sents:
                     sent_list = []
                     sent_list.append(sent.text)
                     # doc_list[idx_paragraph].append(sent_list)
-                    idx_sentence += 1
 
                     word_list = []
+                    idx_word = 0
+
                     for token in sent:
                         word_list.append(token.text)
+
+                        indicies_list = [idx_paragraph, idx_sentence, idx_word]
+                        index[token.text].append(indicies_list)
+
                         idx_word += 1
 
                     sent_list.append(word_list)
-                    doc_list[idx_paragraph].append(sent_list)
+                    document[idx_paragraph].append(sent_list)
+
+                    idx_sentence += 1
+
+
                 idx_paragraph += 1
+                idx_sentence = 0
 
 
 
@@ -82,7 +87,7 @@ def load_book_2(book_id):
         print("Error, file not found.")
         sys.exit()
 
-    return (document, index)
+    return document, index
 
 
 # B2:Function(10/10)
@@ -123,3 +128,5 @@ def kwic(paragraphs, search_terms={}):
 
 # --- Program Starts Here ---
 document, index = load_book_2('84')
+
+print(document[9][5])
